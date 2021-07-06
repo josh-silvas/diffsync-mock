@@ -13,4 +13,4 @@ LOGGER = logging.getLogger("example#5")
 DIR_PATH = Path(__file__).parent.absolute()
 LOCAL_FILE_NAME = f"{DIR_PATH}/local_adapter.json"
 
-RECORDS = 20000
+DEFAULT_RECORDS = 20000

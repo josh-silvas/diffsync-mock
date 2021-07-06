@@ -2,6 +2,7 @@
 import os
 import sys
 from invoke import task
+from diffsync_mock.const import DEFAULT_RECORDS
 
 try:
     import toml
@@ -29,7 +30,7 @@ def run(context, diff=True, sync=False):
 
 
 @task
-def load_redis(context, records=5000):
+def load_redis(context, records=DEFAULT_RECORDS):
     """Run build.py script to load redis with mock data.
 
     Args:
@@ -42,7 +43,7 @@ def load_redis(context, records=5000):
 
 
 @task
-def load_local(context, records=5000):
+def load_local(context, records=DEFAULT_RECORDS):
     """Run build.py script to generate a mock of local data.
 
     Args:
