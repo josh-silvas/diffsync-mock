@@ -15,6 +15,7 @@ TOOL_CONFIG = PYPROJECT_CONFIG["tool"]["poetry"]
 
 # Can be set to a separate Python version to be used for launching or building image
 PYTHON_VER = os.getenv("PYTHON_VER", "3.6")
+PKG_NAME = "diffsync_mock"
 CONTAINER_NAME = "diffsync-redis-1"
 
 
@@ -36,7 +37,7 @@ def load_redis(context, records=DEFAULT_RECORDS):
         context (obj): Used to run specific commands
     """
     start(context)
-    cmd = f"python diffsync_mock/build.py --records {records} --redis"
+    cmd = f"python {PKG_NAME}/build.py --records {records} --redis"
     context.run(cmd, pty=True)
 
 
@@ -48,7 +49,7 @@ def load_local(context, records=DEFAULT_RECORDS):
         records (int): Amount of mock records to add.
         context (obj): Used to run specific commands
     """
-    cmd = f"python common.py --records {records} --local"
+    cmd = f"python {PKG_NAME}/build.py --records {records} --local"
     context.run(cmd, pty=True)
 
 

@@ -3,8 +3,8 @@ from typing import List, Mapping, Text, Type, Union
 import redis
 
 from diffsync import DiffSync, DiffSyncModel
-from diffsync_mock.models import Employee
-from diffsync_mock.const import REDIS_HOST, REDIS_PORT
+from models import Employee
+from const import REDIS_HOST, REDIS_PORT
 
 
 class RedisEmployee(Employee):

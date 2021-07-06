@@ -3,9 +3,9 @@
 from argparse import ArgumentParser, Namespace
 from diffsync.logging import enable_console_logging
 
-from diffsync_mock.local_adapter import LocalAdapter
-from diffsync_mock.redis_adapter import RedisAdapter
-from diffsync_mock.build import fetch_local_data
+from local_adapter import LocalAdapter
+from redis_adapter import RedisAdapter
+from build import fetch_local_data
 
 
 def main(args: Namespace):

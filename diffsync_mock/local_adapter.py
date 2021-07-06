@@ -1,6 +1,6 @@
 """Local adapter used to load 'local' data."""
 from diffsync import DiffSync
-from diffsync_mock.models import Employee
+from models import Employee
 
 
 class LocalAdapter(DiffSync):

@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 from typing import List, Dict
 from redis import Redis
 from faker import Faker
-from diffsync_mock.const import LOCAL_FILE_NAME, REDIS_PORT, REDIS_HOST, DEFAULT_RECORDS, LOGGER
+from const import LOCAL_FILE_NAME, REDIS_PORT, REDIS_HOST, DEFAULT_RECORDS, LOGGER
 
 
 def generate_data(records: int = DEFAULT_RECORDS) -> List[Dict]:
