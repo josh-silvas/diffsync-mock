@@ -19,13 +19,11 @@ CONTAINER_NAME = "diffsync-redis-1"
 
 
 @task
-def run(context, diff=True, sync=False):
+def run(context, redis=False):
     """Run the main python script to execute mocks."""
-    cmd = "python main.py"
-    if diff:
-        cmd += " --diff"
-    elif sync:
-        cmd += " --sync"
+    cmd = "fil-profile run diffsync_mock/main.py"
+    if redis:
+        cmd += " --redis"
     context.run(cmd, pty=True)
 
 
