@@ -1,3 +1,4 @@
+"""Models that are used within DiffSync for the Faker data model."""
 from diffsync import DiffSyncModel
 
 
@@ -15,4 +16,3 @@ class Employee(DiffSyncModel):
     residence: str
     username: str
     mail: str
-

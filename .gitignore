@@ -1,5 +1,6 @@
 # Memory Profiling Files
 fil-result
+diffsync_mock/*.json
 
 # Ansible Retry Files
 *.retry

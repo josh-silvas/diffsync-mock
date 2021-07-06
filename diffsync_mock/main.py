@@ -1,15 +1,11 @@
 #!/usr/bin/env python
-"""Main executable for DiffSync "example2"."""
-import logging
-
+"""Main executable for DiffSync-Mock."""
 from argparse import ArgumentParser, Namespace
+from diffsync.logging import enable_console_logging
+
 from diffsync_mock.local_adapter import LocalAdapter
 from diffsync_mock.redis_adapter import RedisAdapter
 from diffsync_mock.build import fetch_local_data
-
-from diffsync.logging import enable_console_logging
-
-logging.basicConfig(level=logging.INFO)
 
 
 def main(args: Namespace):
@@ -38,7 +34,7 @@ def main(args: Namespace):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--verbosity", "-v", default=0, action="count")
-    parser.add_argument("--redis",
-                        help="Use Redis as an adapter store rather than in-memory allocation.",
-                        action="store_true")
+    parser.add_argument(
+        "--redis", help="Use Redis as an adapter store rather than in-memory allocation.", action="store_true"
+    )
     main(parser.parse_args())

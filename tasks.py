@@ -19,7 +19,8 @@ CONTAINER_NAME = "diffsync-redis-1"
 
 @task
 def run(context, diff=True, sync=False):
-    cmd = f"python main.py"
+    """Run the main python script to execute mocks."""
+    cmd = "python main.py"
     if diff:
         cmd += " --diff"
     elif sync:
@@ -29,6 +30,12 @@ def run(context, diff=True, sync=False):
 
 @task
 def load_redis(context, records=5000):
+    """Run build.py script to load redis with mock data.
+
+    Args:
+        records (int): Amount of mock records to add.
+        context (obj): Used to run specific commands
+    """
     start(context)
     cmd = f"python diffsync_mock/build.py --records {records} --redis"
     context.run(cmd, pty=True)
@@ -36,6 +43,12 @@ def load_redis(context, records=5000):
 
 @task
 def load_local(context, records=5000):
+    """Run build.py script to generate a mock of local data.
+
+    Args:
+        records (int): Amount of mock records to add.
+        context (obj): Used to run specific commands
+    """
     cmd = f"python common.py --records {records} --local"
     context.run(cmd, pty=True)
 
@@ -59,8 +72,8 @@ def start(context):
     Args:
         context (obj): Used to run specific commands
     """
-    up = container_up(context, CONTAINER_NAME)
-    if up:
+    is_up = container_up(context, CONTAINER_NAME)
+    if is_up:
         print("Redis container already running.")
         return
 
@@ -75,8 +88,8 @@ def stop(context):
     Args:
         context (obj): Used to run specific commands
     """
-    up = container_up(context, CONTAINER_NAME)
-    if not up:
+    is_up = container_up(context, CONTAINER_NAME)
+    if not is_up:
         print("Redis container not running.")
         return
 
@@ -85,45 +98,38 @@ def stop(context):
 
 
 @task()
-def pytest(context):
-    """Run pytest test cases."""
-    exec_cmd = "pytest"
-    context.run(context, exec_cmd)
-
-
-@task()
 def black(context):
     """Run black to check that Python files adherence to black standards."""
     exec_cmd = "black --check --diff ."
-    context.run(context, exec_cmd)
+    context.run(exec_cmd, pty=True)
 
 
 @task()
 def flake8(context):
     """Run flake8 code analysis."""
     exec_cmd = "flake8 ."
-    context.run(context, exec_cmd)
+    context.run(exec_cmd, pty=True)
 
 
 @task()
 def pylint(context):
     """Run pylint code analysis."""
     exec_cmd = 'find . -name "*.py" | xargs pylint'
-    context.run(context, exec_cmd)
+    context.run(exec_cmd, pty=True)
 
 
 @task()
 def pydocstyle(context):
     """Run pydocstyle to validate docstring formatting adheres to NTC defined standards."""
     exec_cmd = "pydocstyle ."
-    context.run(context, exec_cmd)
+    context.run(exec_cmd, pty=True)
 
 
 @task()
 def bandit(context):
     """Run bandit to validate basic static code security analysis."""
     exec_cmd = "bandit --recursive ./ --configfile .bandit.yml"
-    context.run(context, exec_cmd)
+    context.run(exec_cmd, pty=True)
 
 
 @task()
@@ -134,6 +140,5 @@ def tests(context):
     pylint(context)
     pydocstyle(context)
     bandit(context)
-    pytest(context)
 
     print("All tests have passed!")

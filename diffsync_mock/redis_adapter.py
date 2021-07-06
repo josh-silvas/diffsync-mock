@@ -1,6 +1,7 @@
+"""Redis adapter used to load 'remote' data."""
+from typing import List, Mapping, Text, Type, Union
 import redis
 
-from typing import List, Mapping, Text, Type, Union
 from diffsync import DiffSync, DiffSyncModel
 from diffsync_mock.models import Employee
 from diffsync_mock.const import REDIS_HOST, REDIS_PORT
@@ -25,9 +26,8 @@ class RedisEmployee(Employee):
         Returns:
             NautobotCountry: DiffSync object newly created
         """
-
         # Create the new country in Nautobot and attach it to its parent
-        emp = diffsync.redis.set(
+        diffsync.redis.set(
             username=ids.get("username"),
             company=attrs.get("company"),
             job=attrs.get("job"),
@@ -55,7 +55,6 @@ class RedisEmployee(Employee):
         Raises:
             ObjectNotUpdated: if an error occurred.
         """
-
         self.diffsync.redis.hset(attrs["username"], None, None, attrs)
 
         return super().update(attrs)
@@ -91,9 +90,9 @@ class RedisEmployee(Employee):
     # -----------------------------------------------------
     @classmethod
     def get_all(cls, diffsync):
-        """Get all Country objects from Nautobot"""
+        """Get all Country objects from Nautobot."""
         results = []
-        for key in diffsync.redis.keys('*'):
+        for key in diffsync.redis.keys("*"):
             results.append(cls.convert_from(diffsync, diffsync.redis.hgetall(key)))
         return results
 
@@ -132,19 +131,16 @@ class RedisAdapter(DiffSync):
     # mainly used when doing a diff to indicate where each data is coming from
     type = "Redis"
 
+    def __init__(self, *args, **kwargs):
+        """Initialize the redis client."""
+        self.redis = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
+        super().__init__(*args, **kwargs)
+
     def load(self):
         """Nothing to load here since this adapter is not leveraging the internal datastore."""
-        self.redis = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
-        pass
 
-    # -----------------------------------------------------
-    # Redefine the default methods to access the objects from the store to implement a storeless adapter
-    #  get / get_all / get_by_uids, add and remove are the main methods to interact with the datastore.
-    # For get / get_all / get_by_uids the adapter is acting as passthrough and it's calling the same
-    #  method on the model itself
-    # -----------------------------------------------------
     def get(
-            self, obj: Union[Text, DiffSyncModel, Type[DiffSyncModel]], identifier: Union[Text, Mapping]
+        self, obj: Union[Text, DiffSyncModel, Type[DiffSyncModel]], identifier: Union[Text, Mapping]
     ) -> DiffSyncModel:
         """Get one object from the data store based on its unique id.
 
@@ -179,7 +175,7 @@ class RedisAdapter(DiffSync):
         return obj.get_all(diffsync=self)
 
     def get_by_uids(
-            self, uids: List[Text], obj: Union[Text, DiffSyncModel, Type[DiffSyncModel]]
+        self, uids: List[Text], obj: Union[Text, DiffSyncModel, Type[DiffSyncModel]]
     ) -> List[DiffSyncModel]:
         """Get multiple objects from the store by their unique IDs/Keys and type.
 
@@ -206,7 +202,6 @@ class RedisAdapter(DiffSync):
         Raises:
             ObjectAlreadyExists: if an object with the same uid is already present
         """
-        pass
 
     def remove(self, obj: DiffSyncModel, remove_children: bool = False):
         """Remove a DiffSyncModel object from the store.
@@ -218,4 +213,3 @@ class RedisAdapter(DiffSync):
         Raises:
             ObjectNotFound: if the object is not present
         """
-        pass

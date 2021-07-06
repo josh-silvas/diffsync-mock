@@ -1,4 +1,4 @@
-
+"""Module-wide variables to be used throughout the project."""
 import logging
 
 from pathlib import Path

@@ -1,3 +1,4 @@
+"""Local adapter used to load 'local' data."""
 from diffsync import DiffSync
 from diffsync_mock.models import Employee
 
@@ -16,18 +17,18 @@ class LocalAdapter(DiffSync):
     # mainly used when doing a diff to indicate where each data is coming from
     type = "Local"
 
-    def load(self, employees):
+    def load(self, employees):  # pylint: disable=arguments-differ
         """Load all regions and countries from a local JSON file."""
-
         # Load all employees
         for index, employee in enumerate(employees):
-            self.add(self.employee(
-                name=employee["name"],
-                company=employee["company"],
-                job=employee["job"],
-                ssn=employee["ssn"],
-                residence=employee["residence"],
-                username=f"{employee['username']}{index}",
-                mail=employee["mail"],
-            ))
-
+            self.add(
+                self.employee(
+                    name=employee["name"],
+                    company=employee["company"],
+                    job=employee["job"],
+                    ssn=employee["ssn"],
+                    residence=employee["residence"],
+                    username=f"{employee['username']}{index}",
+                    mail=employee["mail"],
+                )
+            )
