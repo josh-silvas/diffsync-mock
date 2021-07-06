@@ -2,28 +2,34 @@
 
 This library is used to mock data and profile the performance of the diffsync libarary.
 
-This example is the same as Example 3 except the Nautobot adapter and models are not leverating the internal datastore and all requests are made directly to Nautobot.
-
-The comparison and synchronization of dataset is done between a local JSON file and the [public instance of Nautobot](https://demo.nautobot.com).
-
 ## Install the requirements
 
 to use this example you must have some dependencies installed, please make sure to run 
 ```
-pip install -r requirements.txt
+poetry install
 ```
 
 ## Try the example
 
-The first time a lot of changes should be reported between Nautobot and the local data because by default the demo instance doesn't have the subregion define.
-After the first sync, the diff should show no difference. 
-At this point, Diffsync will be able to identify and fix all changes in Nautobot. You can try to add/update or delete any country in Nautobot and DiffSync will automatically catch it and it will fix it with running in sync mode.
+To properly mock data, be sure to load the mock data into a local .json file and for remote data for 
+the DiffSync library to interact with, load data into a local Redis instance to mock remote data. (i.e. something
+we can interact with programatically.)
 
+To load local data, run `invoke` with the `load-local` option. You can specify here the number of 
+records to mockup, the default will be 20,000 records
 ```
-### DIFF Compare the data between Nautobot and the local JSON file.
-main.py --diff
+invoke load-local --records 20000
+```
+To load remote data, run `invoke` with the `load-redis` option. You can specify here the number of 
+records to mockup, the default will be 20,000 records
+```
+invoke load-redis --records 20000
+```
+> NOTE: This will spin up a vanilla Redis docker container on port `7379` in one is not already running. 
 
-### SYNC Update the list of country in Nautobot.
-main.py --sync
-```
+
+Now that both local and remote data is loaded, you can run the filprofiler testing by either running `main.py`
+directly, or using the `invoke run --redis` command. If you would like to run test using the local data source
+and model as both local and remote (i.e. testing all data loaded into memory) then you can run the invoke command
+without the `--redis` flag. `invoke run`
 

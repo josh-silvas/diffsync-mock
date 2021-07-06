@@ -8,15 +8,11 @@ from const import REDIS_HOST, REDIS_PORT
 
 
 class RedisEmployee(Employee):
-    """Extend the Country to manage Country in Nautobot. CREATE/UPDATE/DELETE.
-
-    Country are represented in Nautobot as a dcim.region object as well but a country must have a parent.
-    Subregion information will be store in the description of the object in Nautobot
-    """
+    """Extend the Employee object in Redis."""
 
     @classmethod
     def create(cls, diffsync: "DiffSync", ids: dict, attrs: dict):
-        """Create a country object in Nautobot.
+        """Create an Employee record in Redis.
 
         Args:
             diffsync: The master data store for other DiffSyncModel instances that we might need to reference
@@ -24,9 +20,9 @@ class RedisEmployee(Employee):
             attrs: Dictionary of additional attributes to set on the new object
 
         Returns:
-            NautobotCountry: DiffSync object newly created
+            Employee: DiffSync object newly created
         """
-        # Create the new country in Nautobot and attach it to its parent
+        # Create the new employee in Redis.
         diffsync.redis.set(
             username=ids.get("username"),
             company=attrs.get("company"),
@@ -43,7 +39,7 @@ class RedisEmployee(Employee):
         return item
 
     def update(self, attrs: dict):
-        """Update a country object in Nautobot.
+        """Update an Employee object in Redis.
 
         Args:
             attrs: Dictionary of attributes to update on the object
@@ -60,12 +56,12 @@ class RedisEmployee(Employee):
         return super().update(attrs)
 
     def delete(self):
-        """Delete a country object in Nautobot.
+        """Delete an Employee object in Redis.
 
         Returns:
-            NautobotCountry: DiffSync object
+            Employee: DiffSync object
         """
-        # Retrieve the pynautobot object and delete the object in Nautobot
+        # Delete the employee object using it's unique identifier, username.
         self.diffsync.redis.delete(self.username)
 
         super().delete()
@@ -90,7 +86,7 @@ class RedisEmployee(Employee):
     # -----------------------------------------------------
     @classmethod
     def get_all(cls, diffsync):
-        """Get all Country objects from Nautobot."""
+        """Get all Employee objects from Redis."""
         results = []
         for key in diffsync.redis.keys("*"):
             results.append(cls.convert_from(diffsync, diffsync.redis.hgetall(key)))
@@ -98,7 +94,7 @@ class RedisEmployee(Employee):
 
     @classmethod
     def get_by_uids(cls, diffsync, uids):
-        """Get a list of Country identified by their unique identifiers."""
+        """Get a list of Employees identified by their unique identifiers."""
         results = []
         for key in diffsync.redis.mget(uids):
             results.append(cls.convert_from(diffsync, diffsync.redis.hgetall(key)))
@@ -106,7 +102,7 @@ class RedisEmployee(Employee):
 
     @classmethod
     def get(cls, diffsync, identifier):
-        """Return an instance of Country based on its unique identifier."""
+        """Return an instance of an Employee based on their unique identifier."""
         if isinstance(identifier, str):
             employee = diffsync.redis.hgetall(identifier)
         elif isinstance(identifier, dict):
@@ -122,13 +118,8 @@ class RedisAdapter(DiffSync):
 
     employee = RedisEmployee
 
-    # Since all countries are associated with a region, we don't need to list country here
-    # When doing a diff or a sync between 2 adapters,
-    #  diffsync will recursively check all models defined at the top level and their children.
     top_level = ["employee"]
 
-    # Human readable name of the Adapter,
-    # mainly used when doing a diff to indicate where each data is coming from
     type = "Redis"
 
     def __init__(self, *args, **kwargs):
